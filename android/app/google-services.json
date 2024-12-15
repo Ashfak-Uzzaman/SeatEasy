@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61831554804",
+    "project_id": "seat-easy-ac-project",
+    "storage_bucket": "seat-easy-ac-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61831554804:android:b39ea75dcd10b7825420a1",
+        "android_client_info": {
+          "package_name": "com.example.seat_easy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzBbpPD34KT53CUwraDh2qQ9Rusx7RJZ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
