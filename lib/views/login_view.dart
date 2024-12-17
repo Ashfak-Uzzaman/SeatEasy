@@ -192,15 +192,15 @@ class _LoginViewState extends State<LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // google button
-                  SquareTile(imagePath: 'lib/resources/images/google.png'),
+                  SquareTile(imagePath: 'lib/assets/images/google.png'),
                   SizedBox(width: 40),
 
                   // apple button
-                  SquareTile(imagePath: 'lib/resources/images/facebook.png'),
+                  SquareTile(imagePath: 'lib/assets/images/facebook.png'),
                   SizedBox(width: 40),
 
                   // facebook button
-                  SquareTile(imagePath: 'lib/resources/images/apple.png'),
+                  SquareTile(imagePath: 'lib/assets/images/apple.png'),
                 ],
               ),
 

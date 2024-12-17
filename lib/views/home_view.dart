@@ -15,7 +15,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int index = 0;
 
-  final _screens = const [HomePage(), TicketPage(), AccountPage()];
+  final _screens = [BusBookingScreen(), TicketPage(), AccountPage()];
 
   @override
   Widget build(BuildContext context) {
