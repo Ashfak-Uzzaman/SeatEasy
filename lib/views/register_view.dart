@@ -291,10 +291,8 @@ class _RegisterViewState extends State<RegisterView> {
 
               // sign in button
               MyButton(
-                //onTap: () => signUserIn(context),
                 onTap: isButtonActive ? () => registerUser(context) : null,
                 isEnabled: isButtonActive,
-                //onTap: () => signUserUp(context),
                 text: 'Sign Up',
               ),
 

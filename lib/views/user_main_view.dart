@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
-import 'package:seat_easy/views/pages/account_page.dart';
-import 'package:seat_easy/views/pages/home_page.dart';
-import 'package:seat_easy/views/pages/ticket_page.dart';
+import 'package:seat_easy/views/user_pages/account_page.dart';
+import 'package:seat_easy/views/user_pages/home_page.dart';
+import 'package:seat_easy/views/user_pages/ticket_page.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

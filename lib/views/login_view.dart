@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
-
 import 'package:seat_easy/components/my_textfield.dart';
 import 'package:seat_easy/components/square_tile.dart';
 import 'package:seat_easy/constants/routes.dart';
@@ -47,12 +46,20 @@ class _LoginViewState extends State<LoginView> {
       final user = AuthService.firebase().currentUser;
 
       if (user?.isEmailVerified ?? false) {
-        // ignore: use_build_context_synchronously
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          homeRoute,
-          (route) =>
-              false, // This predicate ensures that all previous routes are removed.
-        );
+        if (email.compareTo('mdashfak0508@gmail.com') == 0) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            adminHomeRoute,
+            (route) =>
+                false, // This predicate ensures that all previous routes are removed.
+          );
+        } else {
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            homeRoute,
+            (route) =>
+                false, // This predicate ensures that all previous routes are removed.
+          );
+        }
       } else {
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushNamedAndRemoveUntil(
