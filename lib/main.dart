@@ -46,6 +46,7 @@ class InnitializeView extends StatelessWidget {
             if (user != null) {
               if (user.isEmailVerified) {
                 //return const HomeView();
+                //return const AssignRoutePage();
                 return const AdminMainView();
               } else {
                 return const VerifyEmailView();

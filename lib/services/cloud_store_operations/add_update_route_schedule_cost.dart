@@ -7,6 +7,7 @@ Future<void> updateBusRouteScheduleCost({
   required String to,
   required String dateTime, // DateTime string in ISO 8601 format
   required int cost,
+  required bool isInService,
 }) async {
   try {
     print('Hi');
@@ -29,6 +30,7 @@ Future<void> updateBusRouteScheduleCost({
         'DateTime': Timestamp.fromDate(
             DateTime.parse(dateTime)), // Convert to Timestamp
         'Cost': cost,
+        'IsInService': isInService,
       });
 
       print('Bus route updated successfully!');

@@ -5,6 +5,7 @@ import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/services/cloud_store_operations/get_bus_stream.dart';
 
 import 'package:seat_easy/utilities/popup_textfields/assign_service_popup.dart';
+import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -56,15 +57,11 @@ class _RoutePageState extends State<RoutePage> {
             MyButton(
               text: 'Add Bus to Service',
               isEnabled: true,
-              onTap: () async {
-                await openAssignServicePopup(
-                  context: context,
-                  busNameController: busNameController,
-                  busNumberController: busNumberController,
-                  fromController: fromController,
-                  toController: toController,
-                  costController: costController,
-                );
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AssignRoutePage()));
               },
             ),
             const SizedBox(height: 30),
@@ -78,7 +75,7 @@ class _RoutePageState extends State<RoutePage> {
             const SizedBox(height: 10),
 
             StreamBuilder<QuerySnapshot>(
-              stream: getBusesStream(),
+              stream: getBusesStream(activeBus: true),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -99,6 +96,22 @@ class _RoutePageState extends State<RoutePage> {
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: ListTile(
+                        onTap: () {
+                          busNameController.text = bus['BusName'];
+                          busNumberController.text = bus['BusNumber'];
+                          fromController.text = bus['From'];
+                          toController.text = bus['To'];
+                          costController.text = bus['Cost'].toString();
+                          openAssignServicePopup(
+                              context: context,
+                              busNameController: busNameController,
+                              busNumberController: busNumberController,
+                              fromController: fromController,
+                              toController: toController,
+                              costController: costController,
+                              dateTime: DateFormat('yyyy-MM-ddTHH:mm:ss')
+                                  .format(bus['DateTime'].toDate()));
+                        },
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(
                             color: Colors.black,
@@ -110,7 +123,7 @@ class _RoutePageState extends State<RoutePage> {
                           '${bus['BusName']}\n'
                           'Route: ${bus['From']} - ${bus['To']}\n'
                           'Trip Date: ${DateFormat('yyyy-MM-dd').format(bus['DateTime'].toDate())}\n'
-                          'Depature Time: ${DateFormat('HH:mm').format(bus['DateTime'].toDate())}',
+                          'Depature Time: ${DateFormat('HH:mm').format(bus['DateTime'].toDate())}\n',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -118,19 +131,20 @@ class _RoutePageState extends State<RoutePage> {
                         ),
                         subtitle: Text(
                           'Bus No.: ${bus['BusNumber']}\n'
-                          'Available Seats: ${bus['Seat'].where((value) => !value).length}',
+                          'Cost Per Seat: ${bus['Cost']}/-\n'
+                          'Available Seat(s): ${bus['Seat'].where((value) => !value).length}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
-                        trailing: IconButton(
+                        /*trailing: IconButton(
                             onPressed: () async {
                               //await deleteBus(bus.id); // bus.id = document ID
                             },
                             icon: const Icon(
-                              Icons.delete,
-                            )),
+                              Icons.edit,
+                            )),*/
                       ),
                     );
                   },

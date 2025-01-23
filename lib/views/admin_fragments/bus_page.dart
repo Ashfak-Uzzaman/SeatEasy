@@ -62,7 +62,7 @@ class _BusPageState extends State<BusPage> {
             ),
             const SizedBox(height: 10),
             StreamBuilder<QuerySnapshot>(
-              stream: getBusesStream(),
+              stream: getBusesStream(activeBus: true),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();

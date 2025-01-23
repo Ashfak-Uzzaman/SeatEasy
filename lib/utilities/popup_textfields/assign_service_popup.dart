@@ -12,10 +12,9 @@ Future<void> openAssignServicePopup({
   required TextEditingController fromController,
   required TextEditingController toController,
   required TextEditingController costController,
+  required String dateTime,
 }) {
-  String selectedFrom = '';
-  String selectedTo = '';
-  String selectedDateTime = 'Depature Date and Time';
+  String selectedDateTimeToView = '';
 
   return showDialog<void>(
     context: context,
@@ -61,16 +60,17 @@ Future<void> openAssignServicePopup({
                       updateSuggestions(textEditingValue, cities),
                   onSelected: (String selection) {
                     setState(() {
-                      selectedFrom = selection;
+                      fromController.text = selection;
                     });
                   },
                   fieldViewBuilder:
-                      (context, controller, focusNode, onEditingComplete) {
+                      (context, fromController, focusNode, onEditingComplete) {
                     return TextField(
                       controller: fromController,
                       focusNode: focusNode,
                       decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.place, color: Colors.green),
+                        prefixIcon:
+                            Icon(Icons.add_location_alt, color: Colors.green),
                         labelText: "From",
                         border: OutlineInputBorder(),
                         constraints: BoxConstraints(
@@ -90,17 +90,17 @@ Future<void> openAssignServicePopup({
                       updateSuggestions(textEditingValue, cities),
                   onSelected: (String selection) {
                     setState(() {
-                      selectedTo = selection;
                       toController.text = selection;
                     });
                   },
                   fieldViewBuilder:
-                      (context, controller, focusNode, onEditingComplete) {
+                      (context, toController, focusNode, onEditingComplete) {
                     return TextField(
                       controller: toController,
                       focusNode: focusNode,
                       decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.place, color: Colors.blue),
+                        prefixIcon:
+                            Icon(Icons.add_location_alt, color: Colors.blue),
                         labelText: "To",
                         border: OutlineInputBorder(),
                         constraints: BoxConstraints(
@@ -120,7 +120,9 @@ Future<void> openAssignServicePopup({
                     String? selected = await pickDateTime(context);
 
                     setState(() {
-                      selectedDateTime = selected ?? 'Depature Date and Time';
+                      dateTime = selected ?? dateTime;
+
+                      selectedDateTimeToView = dateTime;
                     });
                   },
                   child: Container(
@@ -137,7 +139,7 @@ Future<void> openAssignServicePopup({
                         const Icon(Icons.date_range, color: Colors.orange),
                         const SizedBox(width: 10),
                         Text(
-                          selectedDateTime,
+                          selectedDateTimeToView,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -161,40 +163,66 @@ Future<void> openAssignServicePopup({
                 ),
                 const SizedBox(height: 10.0),
                 MyButton(
-                    onTap: () {}, text: 'Update Bus Route', isEnabled: true),
+                    onTap: () async {
+                      if (busNameController.text.isNotEmpty &&
+                          busNumberController.text.isNotEmpty &&
+                          fromController.text.isNotEmpty &&
+                          toController.text.isNotEmpty &&
+                          dateTime.compareTo('') != 0 &&
+                          costController.text.isNotEmpty) {
+                        try {
+                          await updateBusRouteScheduleCost(
+                            busName: busNameController.text,
+                            busNumber: busNumberController.text,
+                            from: fromController.text,
+                            to: toController.text,
+                            dateTime: dateTime,
+                            cost: int.parse(costController.text),
+                            isInService: true,
+                          );
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        } catch (e) {
+                          //print('$e');
+                        }
+                      } else {
+                        print('Error');
+                      }
+                    },
+                    text: 'Update',
+                    isEnabled: true),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: const Text('SUBMIT'),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+            ),
+            const SizedBox(
+              width: 110,
+            ),
+            TextButton(
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () async {
-                if (costController.text.trim().isEmpty) {
-                  print('Cost field is empty.');
-                  return;
-                }
-                if (!RegExp(r'^\d+$').hasMatch(costController.text.trim())) {
-                  print('Cost field contains invalid characters.');
-                  return;
-                }
-
-                int cost = int.parse(costController.text.trim());
-
-                int x = int.parse(costController.text);
                 try {
                   await updateBusRouteScheduleCost(
                     busName: busNameController.text,
                     busNumber: busNumberController.text,
-                    from: fromController.text,
-                    to: toController.text,
-                    dateTime: selectedDateTime,
-                    cost: x,
+                    from: '',
+                    to: '',
+                    dateTime: dateTime,
+                    cost: int.parse(costController.text),
+                    isInService: false,
                   );
                 } catch (e) {
-                  print('$e');
-                  print(x);
+                  // print('$e');
                 }
-
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context); // Close the dialog
               },
