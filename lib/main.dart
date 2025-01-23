@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
+import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 import 'package:seat_easy/views/admin_main_view.dart';
 
 import 'package:seat_easy/views/user_main_view.dart';
@@ -23,6 +24,7 @@ void main() {
       homeRoute: (context) => const HomeView(),
       verifyEmailRoute: (context) => const VerifyEmailView(),
       adminHomeRoute: (context) => const AdminMainView(),
+      assignRoutePageRoute: (contex) => const AssignRoutePage(),
     },
   ));
 }

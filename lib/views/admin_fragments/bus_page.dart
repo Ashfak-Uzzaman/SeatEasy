@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/services/cloud_store_operations/delete_bus.dart';
-import 'package:seat_easy/services/cloud_store_operations/get_bus.dart';
+import 'package:seat_easy/services/cloud_store_operations/get_bus_stream.dart';
 import 'package:seat_easy/utilities/popup_textfields/add_bus_popup.dart';
 
 class BusPage extends StatefulWidget {

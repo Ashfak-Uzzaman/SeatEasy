@@ -36,6 +36,7 @@ Future<void> openAddBusPopup({
               await addBus(busNameController.text, busNumberController.text);
               busNameController.clear();
               busNumberController.clear();
+              // ignore: use_build_context_synchronously
               Navigator.pop(context); // Close the dialog
             },
           ),

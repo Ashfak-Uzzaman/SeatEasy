@@ -28,8 +28,9 @@ Future<String?> pickDateTime(BuildContext context) async {
         pickedTime.minute,
       );
 
+      // Format to ISO 8601 string
       String selectedDateTime =
-          DateFormat('yyyy-MM-dd \n HH:mm').format(pickedDateTime);
+          DateFormat('yyyy-MM-ddTHH:mm:ss').format(pickedDateTime);
       return selectedDateTime;
     }
   }

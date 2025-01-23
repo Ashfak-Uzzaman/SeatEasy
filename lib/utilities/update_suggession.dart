@@ -1,7 +1,8 @@
 // // my own logic
 import 'package:flutter/material.dart';
 
-List<String> updateSuggestions(TextEditingValue textEditingValue, List list) {
+List<String> updateSuggestions(
+    TextEditingValue textEditingValue, Iterable list) {
   if (textEditingValue.text.isEmpty) {
     return const Iterable<String>.empty().toList();
   }

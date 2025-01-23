@@ -1,56 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:seat_easy/components/my_button.dart';
+
 import 'package:seat_easy/constants/cities.dart';
+import 'package:seat_easy/utilities/picker/date_time_picker.dart';
 import 'package:seat_easy/utilities/update_suggession.dart';
 
-class BusBookingScreen extends StatefulWidget {
-  const BusBookingScreen({super.key});
+class AssignRoutePage extends StatefulWidget {
+  const AssignRoutePage({super.key});
 
   @override
-  State<BusBookingScreen> createState() => _BusBookingScreenState();
+  State<AssignRoutePage> createState() => _AssignRoutePageState();
 }
 
-class _BusBookingScreenState extends State<BusBookingScreen> {
+class _AssignRoutePageState extends State<AssignRoutePage> {
   String selectedFrom = '';
   String selectedTo = '';
-  String selectedDate = 'Pick a date';
+  String selectedDateTime = 'Depature Date and Time';
+  TextEditingController controller = TextEditingController();
 
-  Future<void> _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        selectedDate = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
-
-/*
-// my own logic
-  List<String> updateSuggestions(TextEditingValue textEditingValue) {
-    if (textEditingValue.text.isEmpty) {
-      return const Iterable<String>.empty().toList();
-    }
-    return cities.where((String place) {
-      return place
-              .toLowerCase()
-              .substring(0, textEditingValue.text.length)
-              .compareTo(textEditingValue.text.toLowerCase()) ==
-          0;
-    }).toList();
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(children: [
-        Align(
-          alignment: Alignment.topCenter,
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          'Assign Bus  to Service',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+        ),
+        backgroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+        child: SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.all(15),
             padding: const EdgeInsets.all(10),
@@ -68,16 +50,33 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    Radio(value: true, groupValue: true, onChanged: (_) {}),
-                    const Text('One Way'),
-                    const SizedBox(width: 20),
-                    Radio(value: false, groupValue: true, onChanged: (_) {}),
-                    const Text('Round Way'),
-                  ],
+                const SizedBox(height: 20.0),
+                const TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.bus_alert, color: Colors.blue),
+                    labelText: "Bus Name",
+                    border: OutlineInputBorder(),
+                    constraints: BoxConstraints(
+                      maxHeight: 50.0,
+                      maxWidth: 450.0,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 10),
+
+                const SizedBox(height: 20.0),
+                const TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.book, color: Colors.blue),
+                    labelText: "Bus Number",
+                    border: OutlineInputBorder(),
+                    constraints: BoxConstraints(
+                      maxHeight: 50.0,
+                      maxWidth: 450.0,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20.0),
 
                 // From Autocomplete Input
                 Autocomplete<String>(
@@ -106,7 +105,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20.0),
 
                 // To Autocomplete Input
                 Autocomplete<String>(
@@ -135,11 +134,17 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20.0),
 
                 // Date Picker
                 GestureDetector(
-                  onTap: _pickDate,
+                  onTap: () async {
+                    String? selected = await pickDateTime(context);
+
+                    setState(() {
+                      selectedDateTime = selected ?? 'Depature Date and Time';
+                    });
+                  },
                   child: Container(
                     height: 50.0,
                     width: 450.0,
@@ -154,21 +159,36 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                         const Icon(Icons.date_range, color: Colors.orange),
                         const SizedBox(width: 10),
                         Text(
-                          selectedDate,
+                          selectedDateTime,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 20.0),
+                const TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.currency_exchange_rounded,
+                        color: Colors.blue),
+                    labelText: "Cost",
+                    border: OutlineInputBorder(),
+                    constraints: BoxConstraints(
+                      maxHeight: 50.0,
+                      maxWidth: 450.0,
+                    ),
+                  ),
+                ),
 
-                MyButton(onTap: () {}, text: 'SEARCH', isEnabled: true),
+                const SizedBox(height: 20.0),
+
+                MyButton(
+                    onTap: () {}, text: 'Update Bus Route', isEnabled: true),
               ],
             ),
           ),
         ),
-      ]),
+      ),
     );
   }
 }

@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<void> updateBusRouteByDetails({
+Future<void> updateBusRouteScheduleCost({
   required String busName,
   required String busNumber,
   required String from,
   required String to,
-  required String dateTime,
+  required String dateTime, // DateTime string in ISO 8601 format
+  required int cost,
 }) async {
   try {
+    print('Hi');
     // Query the Firestore collection to find the document
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('BusDB')
@@ -16,6 +18,7 @@ Future<void> updateBusRouteByDetails({
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
+      print('Hi');
       // Get the document ID of the matching document
       String docId = querySnapshot.docs.first.id;
 
@@ -23,7 +26,9 @@ Future<void> updateBusRouteByDetails({
       await FirebaseFirestore.instance.collection('BusDB').doc(docId).update({
         'From': from,
         'To': to,
-        'DateTime': DateTime.parse(dateTime),
+        'DateTime': Timestamp.fromDate(
+            DateTime.parse(dateTime)), // Convert to Timestamp
+        'Cost': cost,
       });
 
       print('Bus route updated successfully!');

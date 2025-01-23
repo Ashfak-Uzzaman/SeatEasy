@@ -1,5 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:seat_easy/models/bus.dart';
 
-Stream<QuerySnapshot> getBusesStream() {
-  return FirebaseFirestore.instance.collection('BusDB').snapshots();
+Future<void> getAllBuses() async {
+  CollectionReference buses = FirebaseFirestore.instance.collection('BusDB');
+
+  try {
+    QuerySnapshot querySnapshot = await buses.get();
+
+    for (var doc in querySnapshot.docs) {
+      print('Document ID: ${doc.id}');
+      print('Data: ${doc.data()}');
+
+      Object? bus = doc.data();
+    }
+  } catch (e) {
+    print('Failed to get buses: $e');
+  }
 }

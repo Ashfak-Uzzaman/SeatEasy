@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:seat_easy/components/my_button.dart';
-import 'package:seat_easy/constants/cities.dart';
-import 'package:seat_easy/utilities/picker/date_time_picker.dart';
-import 'package:seat_easy/utilities/update_suggessions.dart';
+import 'package:seat_easy/services/cloud_store_operations/get_bus_stream.dart';
+
+import 'package:seat_easy/utilities/popup_textfields/assign_service_popup.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -12,183 +14,130 @@ class RoutePage extends StatefulWidget {
 }
 
 class _RoutePageState extends State<RoutePage> {
-  String selectedFrom = '';
-  String selectedTo = '';
-  String selectedDateTime = 'Depature Date and Time';
-/*
-  Future<void> _pickDateTime() async {
-    // showDatePicker used to pick a date
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
+  late TextEditingController busNameController;
+  late TextEditingController busNumberController;
+  late TextEditingController fromController;
+  late TextEditingController toController;
+  late TextEditingController costController;
 
-    if (pickedDate != null) {
-      // showTimePicker used to pick a time
-      TimeOfDay? pickedTime = await showTimePicker(
-        // ignore: use_build_context_synchronously
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (pickedTime != null) {
-        // Combine the date and time
-        DateTime pickedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-
-        // Update state with the selected DateTime
-        setState(() {
-          selectedDateTime =
-              DateFormat('yyyy-MM-dd \n HH:mm').format(pickedDateTime);
-        });
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the TextEditingControllers
+    busNameController = TextEditingController();
+    busNumberController = TextEditingController();
+    fromController = TextEditingController();
+    toController = TextEditingController();
+    costController = TextEditingController();
   }
-*/
-/*
-// my own logic
-  List<String> updateSuggestions(TextEditingValue textEditingValue) {
-    if (textEditingValue.text.isEmpty) {
-      return const Iterable<String>.empty().toList();
-    }
-    return cities.where((String place) {
-      return place
-              .toLowerCase()
-              .substring(0, textEditingValue.text.length)
-              .compareTo(textEditingValue.text.toLowerCase()) ==
-          0;
-    }).toList();
+
+  @override
+  void dispose() {
+    // Dispose of the TextEditingControllers to free up resources
+    busNameController.dispose();
+    busNumberController.dispose();
+    fromController.dispose();
+    toController.dispose();
+    costController.dispose();
+    super.dispose();
   }
-*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(children: [
-        Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            margin: const EdgeInsets.all(15),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.95),
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 5,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 10),
-
-                // From Autocomplete Input
-                Autocomplete<String>(
-                  optionsBuilder: (TextEditingValue textEditingValue) =>
-                      updateSuggestions(textEditingValue, cities),
-                  onSelected: (String selection) {
-                    setState(() {
-                      selectedFrom = selection;
-                    });
-                  },
-                  fieldViewBuilder:
-                      (context, controller, focusNode, onEditingComplete) {
-                    return TextField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.place, color: Colors.green),
-                        labelText: "From",
-                        border: OutlineInputBorder(),
-                        constraints: BoxConstraints(
-                          maxHeight: 50.0,
-                          maxWidth: 450.0,
-                        ),
-                      ),
-                      onEditingComplete: onEditingComplete,
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-
-                // To Autocomplete Input
-                Autocomplete<String>(
-                  optionsBuilder: (TextEditingValue textEditingValue) =>
-                      updateSuggestions(textEditingValue, cities),
-                  onSelected: (String selection) {
-                    setState(() {
-                      selectedTo = selection;
-                    });
-                  },
-                  fieldViewBuilder:
-                      (context, controller, focusNode, onEditingComplete) {
-                    return TextField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.place, color: Colors.blue),
-                        labelText: "To",
-                        border: OutlineInputBorder(),
-                        constraints: BoxConstraints(
-                          maxHeight: 50.0,
-                          maxWidth: 450.0,
-                        ),
-                      ),
-                      onEditingComplete: onEditingComplete,
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-
-                // Date Picker
-                GestureDetector(
-                  onTap: () async {
-                    String? selected = await pickDateTime(context);
-
-                    setState(() {
-                      selectedDateTime = selected ?? 'Depature Date and Time';
-                    });
-                  },
-                  child: Container(
-                    height: 50.0,
-                    width: 450.0,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.date_range, color: Colors.orange),
-                        const SizedBox(width: 10),
-                        Text(
-                          selectedDateTime,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-
-                MyButton(
-                    onTap: () {}, text: 'Update Bus Route', isEnabled: true),
-              ],
-            ),
-          ),
+        appBar: AppBar(
+          title: const Text('Bus Status'),
+          centerTitle: true,
         ),
-      ]),
-    );
+        body: ListView(
+          //padding: const EdgeInsets.all(32),
+          children: [
+            //MyButton(onTap: onTap, text: text, isEnabled: isEnabled)
+            MyButton(
+              text: 'Add Bus to Service',
+              isEnabled: true,
+              onTap: () async {
+                await openAssignServicePopup(
+                  context: context,
+                  busNameController: busNameController,
+                  busNumberController: busNumberController,
+                  fromController: fromController,
+                  toController: toController,
+                  costController: costController,
+                );
+              },
+            ),
+            const SizedBox(height: 30),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(32, 0, 32, 0),
+              child: Text(
+                'Bus List:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            StreamBuilder<QuerySnapshot>(
+              stream: getBusesStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                // snapshot.data! -> By using ! operator, you are telling the compiler the variable won't be null.
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Text('No buses available.');
+                }
+
+                // Build a list of buses
+                return ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var bus = snapshot.data!.docs[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        title: Text(
+                          '${bus['BusName']}\n'
+                          'Route: ${bus['From']} - ${bus['To']}\n'
+                          'Trip Date: ${DateFormat('yyyy-MM-dd').format(bus['DateTime'].toDate())}\n'
+                          'Depature Time: ${DateFormat('HH:mm').format(bus['DateTime'].toDate())}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Bus No.: ${bus['BusNumber']}\n'
+                          'Available Seats: ${bus['Seat'].where((value) => !value).length}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        trailing: IconButton(
+                            onPressed: () async {
+                              //await deleteBus(bus.id); // bus.id = document ID
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                            )),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ));
   }
 }

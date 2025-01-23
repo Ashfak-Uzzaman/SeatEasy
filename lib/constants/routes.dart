@@ -3,3 +3,4 @@ const registerRoute = '/register/';
 const homeRoute = '/home/';
 const verifyEmailRoute = '/verifyEmail/';
 const adminHomeRoute = '/adminHome/';
+const assignRoutePageRoute = '/assignRoutePage/';
