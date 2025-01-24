@@ -13,6 +13,9 @@ Future<void> addBus(String busName, String busNumber) async {
     'To': '',
     'Seat': List<bool>.filled(30, false), // 30 boolean values, all false
     'CostPerSeat': 0,
+    'Day': '0',
+    'Month': '0',
+    'Year': '0',
   };
 
   try {

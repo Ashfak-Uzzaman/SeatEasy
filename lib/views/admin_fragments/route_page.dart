@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:seat_easy/components/my_button.dart';
-import 'package:seat_easy/services/cloud_store_operations/get_bus_stream.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/get_bus_stream.dart';
 
-import 'package:seat_easy/utilities/popup_textfields/assign_service_popup.dart';
+import 'package:seat_easy/utilities/popup_textfields/update_service_popup.dart';
 import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 
 class RoutePage extends StatefulWidget {
@@ -75,7 +75,12 @@ class _RoutePageState extends State<RoutePage> {
             const SizedBox(height: 10),
 
             StreamBuilder<QuerySnapshot>(
-              stream: getBusesStream(activeBus: true),
+              stream: getBusesStream(
+                activeBus: true,
+                fromDestination: '',
+                toDestination: '',
+                dateTime: null,
+              ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -102,7 +107,7 @@ class _RoutePageState extends State<RoutePage> {
                           fromController.text = bus['From'];
                           toController.text = bus['To'];
                           costController.text = bus['Cost'].toString();
-                          openAssignServicePopup(
+                          openUpdateServicePopup(
                               context: context,
                               busNameController: busNameController,
                               busNumberController: busNumberController,
@@ -121,8 +126,8 @@ class _RoutePageState extends State<RoutePage> {
                         ),
                         title: Text(
                           '${bus['BusName']}\n'
-                          'Route: ${bus['From']} - ${bus['To']}\n'
-                          'Trip Date: ${DateFormat('yyyy-MM-dd').format(bus['DateTime'].toDate())}\n'
+                          '${bus['From']} - ${bus['To']}\n'
+                          'Date: ${DateFormat('dd-MM-yyyy').format(bus['DateTime'].toDate())}\n'
                           'Depature Time: ${DateFormat('HH:mm').format(bus['DateTime'].toDate())}\n',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
@@ -130,7 +135,7 @@ class _RoutePageState extends State<RoutePage> {
                           ),
                         ),
                         subtitle: Text(
-                          'Bus No.: ${bus['BusNumber']}\n'
+                          'Bus No: ${bus['BusNumber']}\n'
                           'Cost Per Seat: ${bus['Cost']}/-\n'
                           'Available Seat(s): ${bus['Seat'].where((value) => !value).length}',
                           style: const TextStyle(

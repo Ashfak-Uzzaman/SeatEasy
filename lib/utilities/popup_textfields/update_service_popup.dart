@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
+import 'package:seat_easy/components/my_snack_bar.dart';
 import 'package:seat_easy/constants/cities.dart';
-import 'package:seat_easy/services/cloud_store_operations/add_update_route_schedule_cost.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_exceptions.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/add_update_route_schedule_cost.dart';
 import 'package:seat_easy/utilities/picker/date_time_picker.dart';
 import 'package:seat_easy/utilities/update_suggession.dart';
 
-Future<void> openAssignServicePopup({
+Future<void> openUpdateServicePopup({
   required BuildContext context,
   required TextEditingController busNameController,
   required TextEditingController busNumberController,
@@ -21,7 +23,7 @@ Future<void> openAssignServicePopup({
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          title: const Text('Add a Bus'),
+          title: const Text('Update Details'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -117,7 +119,10 @@ Future<void> openAssignServicePopup({
                 // Date Picker
                 GestureDetector(
                   onTap: () async {
-                    String? selected = await pickDateTime(context);
+                    String? selected = await pickDateTime(
+                      context: context,
+                      currentTime: false,
+                    );
 
                     setState(() {
                       dateTime = selected ?? dateTime;
@@ -179,14 +184,35 @@ Future<void> openAssignServicePopup({
                             dateTime: dateTime,
                             cost: int.parse(costController.text),
                             isInService: true,
+                            year: dateTime.substring(0, 4),
+                            month: dateTime.substring(5, 7),
+                            day: dateTime.substring(8, 10),
                           );
                           // ignore: use_build_context_synchronously
                           Navigator.pop(context);
+                        } on NotMatchingException {
+                          // ignore: use_build_context_synchronously
+                          showSnackbar(
+                              message:
+                                  'Bus Name and Number is Not Matching With the available Data in Database',
+                              // ignore: use_build_context_synchronously
+                              context: context);
+                        } on FaildToUpdateException {
+                          showSnackbar(
+                              message: 'Filed to Update',
+                              // ignore: use_build_context_synchronously
+                              context: context);
                         } catch (e) {
-                          //print('$e');
+                          showSnackbar(
+                              message: 'Failed to Update $e',
+                              // ignore: use_build_context_synchronously
+                              context: context);
                         }
                       } else {
-                        print('Error');
+                        //print('Error');
+                        showSnackbar(
+                            message: 'Can\'t Empty Input Fields',
+                            context: context);
                       }
                     },
                     text: 'Update',
@@ -219,6 +245,9 @@ Future<void> openAssignServicePopup({
                     dateTime: dateTime,
                     cost: int.parse(costController.text),
                     isInService: false,
+                    year: '',
+                    month: '',
+                    day: '',
                   );
                 } catch (e) {
                   // print('$e');

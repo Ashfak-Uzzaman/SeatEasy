@@ -3,6 +3,7 @@ import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
 import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 import 'package:seat_easy/views/admin_main_view.dart';
+import 'package:seat_easy/views/user_fragments/ticket_booking_page.dart';
 
 import 'package:seat_easy/views/user_main_view.dart';
 import 'package:seat_easy/views/login_view.dart';
@@ -21,7 +22,7 @@ void main() {
     routes: {
       loginRoute: (context) => const LoginView(),
       registerRoute: (context) => const RegisterView(),
-      homeRoute: (context) => const HomeView(),
+      homeRoute: (context) => const UserMainView(),
       verifyEmailRoute: (context) => const VerifyEmailView(),
       adminHomeRoute: (context) => const AdminMainView(),
       assignRoutePageRoute: (contex) => const AssignRoutePage(),
@@ -45,9 +46,10 @@ class InnitializeView extends StatelessWidget {
 
             if (user != null) {
               if (user.isEmailVerified) {
-                //return const HomeView();
+                return const TicketBookingPage();
+                //return const UserMainView();
                 //return const AssignRoutePage();
-                return const AdminMainView();
+                //return const AdminMainView();
               } else {
                 return const VerifyEmailView();
               }

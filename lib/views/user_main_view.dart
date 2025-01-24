@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
-import 'package:seat_easy/views/user_pages/account_page.dart';
-import 'package:seat_easy/views/user_pages/home_page.dart';
-import 'package:seat_easy/views/user_pages/ticket_page.dart';
+import 'package:seat_easy/views/user_fragments/account_page.dart';
+import 'package:seat_easy/views/user_fragments/home_page.dart';
+import 'package:seat_easy/views/user_fragments/ticket_page.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class UserMainView extends StatefulWidget {
+  const UserMainView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<UserMainView> createState() => _UserMainViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _UserMainViewState extends State<UserMainView> {
   int index = 0;
 
-  final _screens = [BusBookingScreen(), TicketPage(), AccountPage()];
+  final _screens = [
+    const BusBookingScreen(),
+    const TicketPage(),
+    const AccountPage()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +27,8 @@ class _HomeViewState extends State<HomeView> {
       body: _screens[index],
       bottomNavigationBar: NavigationBar(
         height: 75,
-        indicatorColor: Colors.grey[300],
-        backgroundColor: Colors.grey,
+        indicatorColor: const Color.fromARGB(255, 237, 245, 251),
+        backgroundColor: Colors.white,
         selectedIndex: index,
         onDestinationSelected: (index) => setState(() => this.index = index),
         destinations: const [
@@ -36,7 +40,7 @@ class _HomeViewState extends State<HomeView> {
             ),
             selectedIcon: Icon(
               Icons.home,
-              size: 35,
+              size: 40,
             ),
           ),
           NavigationDestination(
@@ -47,7 +51,7 @@ class _HomeViewState extends State<HomeView> {
             ),
             selectedIcon: Icon(
               Icons.airplane_ticket,
-              size: 35,
+              size: 40,
             ),
           ),
           NavigationDestination(
@@ -58,13 +62,13 @@ class _HomeViewState extends State<HomeView> {
             ),
             selectedIcon: Icon(
               Icons.person_2,
-              size: 35,
+              size: 40,
             ),
           ),
         ],
       ),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         actions: [
           IconButton(

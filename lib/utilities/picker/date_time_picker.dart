@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-Future<String?> pickDateTime(BuildContext context) async {
+Future<String?> pickDateTime(
+    {required BuildContext context, required currentTime}) async {
   // Show date picker
   DateTime? pickedDate = await showDatePicker(
     context: context,
@@ -11,12 +12,18 @@ Future<String?> pickDateTime(BuildContext context) async {
   );
 
   if (pickedDate != null) {
-    // Show time picker
-    TimeOfDay? pickedTime = await showTimePicker(
-      // ignore: use_build_context_synchronously
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+    TimeOfDay? pickedTime;
+
+    if (currentTime) {
+      pickedTime = TimeOfDay.now();
+    } else {
+      // Show time picker
+      pickedTime = await showTimePicker(
+        // ignore: use_build_context_synchronously
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+    }
 
     if (pickedTime != null) {
       // Combine date and time

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/constants/cities.dart';
+import 'package:seat_easy/utilities/picker/date_time_picker.dart';
 import 'package:seat_easy/utilities/update_suggession.dart';
+import 'package:seat_easy/views/user_fragments/show_bus_page.dart';
 
 class BusBookingScreen extends StatefulWidget {
   const BusBookingScreen({super.key});
@@ -12,42 +14,35 @@ class BusBookingScreen extends StatefulWidget {
 }
 
 class _BusBookingScreenState extends State<BusBookingScreen> {
-  String selectedFrom = '';
-  String selectedTo = '';
-  String selectedDate = 'Pick a date';
+  late TextEditingController busNameController;
+  late TextEditingController busNumberController;
+  late TextEditingController fromController;
+  late TextEditingController toController;
+  late TextEditingController costController;
 
-  Future<void> _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        selectedDate = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
+  String selectedDate = '';
+  String selectedDateToView = 'Pick a Date';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the TextEditingControllers
+    fromController = TextEditingController();
+    toController = TextEditingController();
   }
 
-/*
-// my own logic
-  List<String> updateSuggestions(TextEditingValue textEditingValue) {
-    if (textEditingValue.text.isEmpty) {
-      return const Iterable<String>.empty().toList();
-    }
-    return cities.where((String place) {
-      return place
-              .toLowerCase()
-              .substring(0, textEditingValue.text.length)
-              .compareTo(textEditingValue.text.toLowerCase()) ==
-          0;
-    }).toList();
+  @override
+  void dispose() {
+    // Dispose of the TextEditingControllers to free up resources
+    fromController.dispose();
+    toController.dispose();
+    super.dispose();
   }
-*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView(children: [
         Align(
           alignment: Alignment.topCenter,
@@ -85,11 +80,14 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                       updateSuggestions(textEditingValue, cities),
                   onSelected: (String selection) {
                     setState(() {
-                      selectedFrom = selection;
+                      fromController.text = selection;
                     });
                   },
                   fieldViewBuilder:
                       (context, controller, focusNode, onEditingComplete) {
+                    controller.addListener(() {
+                      fromController.text = controller.text;
+                    });
                     return TextField(
                       controller: controller,
                       focusNode: focusNode,
@@ -114,11 +112,14 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                       updateSuggestions(textEditingValue, cities),
                   onSelected: (String selection) {
                     setState(() {
-                      selectedTo = selection;
+                      toController.text = selection;
                     });
                   },
                   fieldViewBuilder:
                       (context, controller, focusNode, onEditingComplete) {
+                    controller.addListener(() {
+                      toController.text = controller.text;
+                    });
                     return TextField(
                       controller: controller,
                       focusNode: focusNode,
@@ -139,7 +140,18 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
 
                 // Date Picker
                 GestureDetector(
-                  onTap: _pickDate,
+                  onTap: () async {
+                    String? selected =
+                        await pickDateTime(context: context, currentTime: true);
+
+                    setState(() {
+                      selectedDate = selected ?? '';
+
+                      selectedDateToView = (selectedDate.compareTo('') != 0)
+                          ? selectedDate.substring(0, 10)
+                          : 'Pick a date';
+                    });
+                  },
                   child: Container(
                     height: 50.0,
                     width: 450.0,
@@ -154,7 +166,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                         const Icon(Icons.date_range, color: Colors.orange),
                         const SizedBox(width: 10),
                         Text(
-                          selectedDate,
+                          selectedDateToView,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -163,7 +175,19 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                 ),
                 const SizedBox(height: 10.0),
 
-                MyButton(onTap: () {}, text: 'SEARCH', isEnabled: true),
+                MyButton(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShowBusPage(
+                                fromDestination: fromController.text,
+                                toDestination: toController.text,
+                                dateTime: selectedDate)),
+                      );
+                    },
+                    text: 'SEARCH',
+                    isEnabled: true),
               ],
             ),
           ),

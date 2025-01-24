@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
+import 'package:seat_easy/components/my_snack_bar.dart';
 
 import 'package:seat_easy/constants/cities.dart';
-import 'package:seat_easy/services/cloud_store_operations/add_update_route_schedule_cost.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_exceptions.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/add_update_route_schedule_cost.dart';
 import 'package:seat_easy/utilities/picker/date_time_picker.dart';
 import 'package:seat_easy/utilities/update_suggession.dart';
 
@@ -19,8 +21,7 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
   late TextEditingController fromController;
   late TextEditingController toController;
   late TextEditingController costController;
-  String selectedFrom = '';
-  String selectedTo = '';
+
   String selectedDateTime = '';
   String selectedDateTimeToView = 'Date and Time';
 
@@ -100,17 +101,20 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) =>
                   updateSuggestions(textEditingValue, cities),
-              onSelected: (String selection) {
+              /*onSelected: (String selection) {
                 setState(() {
                   fromController.text = selection;
                 });
-              },
+              },*/
               fieldViewBuilder:
-                  (context, fromController, focusNode, onEditingComplete) {
+                  (context, controller, focusNode, onEditingComplete) {
+                controller.addListener(() {
+                  fromController.text = controller.text;
+                });
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(27, 20, 27, 0),
                   child: TextField(
-                    controller: fromController,
+                    controller: controller,
                     focusNode: focusNode,
                     decoration: const InputDecoration(
                       prefixIcon:
@@ -133,17 +137,20 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) =>
                   updateSuggestions(textEditingValue, cities),
-              onSelected: (String selection) {
+              /*onSelected: (String selection) {
                 setState(() {
                   toController.text = selection;
                 });
-              },
+              },*/
               fieldViewBuilder:
-                  (context, toController, focusNode, onEditingComplete) {
+                  (context, controller, focusNode, onEditingComplete) {
+                controller.addListener(() {
+                  toController.text = controller.text;
+                });
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(27, 20, 27, 0),
                   child: TextField(
-                    controller: toController,
+                    controller: controller,
                     focusNode: focusNode,
                     decoration: const InputDecoration(
                       prefixIcon:
@@ -165,7 +172,8 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
             // Date Picker
             GestureDetector(
               onTap: () async {
-                String? selected = await pickDateTime(context);
+                String? selected =
+                    await pickDateTime(context: context, currentTime: false);
 
                 setState(() {
                   selectedDateTime = selected ?? '';
@@ -222,7 +230,7 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
 
             MyButton(
                 /*onTap: () {
-                  print('${fromController.text}->${toController.text}->');
+                  print('${fromController.text}->${toController.text}');
                 },*/
                 onTap: () async {
                   if (busNameController.text.isNotEmpty &&
@@ -231,6 +239,7 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
                       toController.text.isNotEmpty &&
                       selectedDateTime.compareTo('') != 0 &&
                       costController.text.isNotEmpty) {
+                    //print('${fromController.text}->${toController.text}');
                     try {
                       await updateBusRouteScheduleCost(
                         busName: busNameController.text,
@@ -240,12 +249,35 @@ class _AssignRoutePageState extends State<AssignRoutePage> {
                         dateTime: selectedDateTime,
                         cost: int.parse(costController.text),
                         isInService: true,
+                        year: selectedDateTime.substring(0, 4),
+                        month: selectedDateTime.substring(5, 7),
+                        day: selectedDateTime.substring(8, 10),
                       );
+                    } on NotMatchingException {
+                      // ignore: use_build_context_synchronously
+                      showSnackbar(
+                          message:
+                              // ignore: use_build_context_synchronously
+                              'Bus Name and Number is Not Matching With the available Data in Database',
+                          // ignore: use_build_context_synchronously
+                          context: context);
+                    } on FaildToUpdateException {
+                      showSnackbar(
+                          // ignore: use_build_context_synchronously
+                          message: 'Failed to Update',
+                          // ignore: use_build_context_synchronously
+                          context: context);
                     } catch (e) {
-                      //print('$e');
+                      showSnackbar(
+                          // ignore: use_build_context_synchronously
+                          message: 'Failed to Update $e',
+                          // ignore: use_build_context_synchronously
+                          context: context);
                     }
                   } else {
-                    print('Error');
+                    //print('Error');
+                    showSnackbar(
+                        message: 'Can\'t Empty Input Fields', context: context);
                   }
 
                   // ignore: use_build_context_synchronously
