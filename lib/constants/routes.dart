@@ -4,3 +4,4 @@ const homeRoute = '/home/';
 const verifyEmailRoute = '/verifyEmail/';
 const adminHomeRoute = '/adminHome/';
 const assignRoutePageRoute = '/assignRoutePage/';
+const showBusPageRoute = '/showBusPage/';

@@ -64,16 +64,35 @@ class _ShowBusPageState extends State<ShowBusPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  var bus = snapshot.data!.docs[index];
+                  var bus = snapshot.data!.docs[
+                      index]; // QueryDocumentSnapshot<Object?> bus =  snapshot.data!.docs[index];
+                  //String busId = bus.id; // The document's ID
+
+                  // Here busRef is the direct reference of the document in firestore
+                  DocumentReference busRef = FirebaseFirestore.instance
+                      .collection('BusDB')
+                      .doc(bus.id);
+
+                  var seatStatusArray = bus['Seat'];
+
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
                       onTap: () {
+                        //print('haha hihi huhu');
+                        //print(seatStatusArray);
+                        final String busName = bus['BusName'];
+                        final String ticket =
+                            '$busName\n${widget.fromDestination} ➜ ${widget.toDestination}\n${widget.dateTime.substring(8, 10)} - ${widget.dateTime.substring(5, 7)} - ${widget.dateTime.substring(0, 4)}\n${widget.dateTime.substring(11, 13)} :  ${widget.dateTime.substring(14, 16)}\n';
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const TicketBookingPage()));
+                                builder: (context) => TicketBookingPage(
+                                      busRef: busRef,
+                                      seatStatusArray: seatStatusArray,
+                                      costPerSeat: bus['Cost'],
+                                      ticket: ticket,
+                                    )));
                       },
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:seat_easy/models/bus.dart';
 
 Future<void> getAllBuses() async {
   CollectionReference buses = FirebaseFirestore.instance.collection('BusDB');

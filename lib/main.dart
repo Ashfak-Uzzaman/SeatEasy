@@ -3,8 +3,6 @@ import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
 import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 import 'package:seat_easy/views/admin_main_view.dart';
-import 'package:seat_easy/views/user_fragments/ticket_booking_page.dart';
-
 import 'package:seat_easy/views/user_main_view.dart';
 import 'package:seat_easy/views/login_view.dart';
 import 'package:seat_easy/views/register_view.dart';
@@ -46,10 +44,14 @@ class InnitializeView extends StatelessWidget {
 
             if (user != null) {
               if (user.isEmailVerified) {
-                return const TicketBookingPage();
-                //return const UserMainView();
+                String userEmail = AuthService.firebase().currentUser!.email;
+
+                if (userEmail.compareTo('cse_182210012101041@lus.ac.bd') == 0) {
+                  return const AdminMainView();
+                }
+                //return const TicketBookingPage();
+                return const UserMainView();
                 //return const AssignRoutePage();
-                //return const AdminMainView();
               } else {
                 return const VerifyEmailView();
               }

@@ -4,17 +4,17 @@ import 'package:intl/intl.dart';
 import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/get_bus_stream.dart';
 
-import 'package:seat_easy/utilities/popup_textfields/update_service_popup.dart';
+import 'package:seat_easy/utilities/popups/update_service_popup.dart';
 import 'package:seat_easy/views/admin_fragments/assign_route._page.dart';
 
-class RoutePage extends StatefulWidget {
-  const RoutePage({super.key});
+class RouteAndSchedulePage extends StatefulWidget {
+  const RouteAndSchedulePage({super.key});
 
   @override
-  State<RoutePage> createState() => _RoutePageState();
+  State<RouteAndSchedulePage> createState() => _RouteAndSchedulePageState();
 }
 
-class _RoutePageState extends State<RoutePage> {
+class _RouteAndSchedulePageState extends State<RouteAndSchedulePage> {
   late TextEditingController busNameController;
   late TextEditingController busNumberController;
   late TextEditingController fromController;
@@ -98,6 +98,13 @@ class _RoutePageState extends State<RoutePage> {
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
                     var bus = snapshot.data!.docs[index];
+                    //String busId = bus.id; // The document's ID
+
+                    // Here busRef is the direct reference of the document in firestore
+                    /*DocumentReference busRef = FirebaseFirestore.instance
+                        .collection('BusDB')
+                        .doc(bus.id);
+                        */
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: ListTile(

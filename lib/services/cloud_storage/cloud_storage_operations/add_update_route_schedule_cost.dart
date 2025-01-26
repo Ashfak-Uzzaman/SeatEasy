@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:seat_easy/components/my_snack_bar.dart';
 import 'package:seat_easy/services/cloud_storage/cloud_storage_exceptions.dart';
 
 Future<void> updateBusRouteScheduleCost({
@@ -7,7 +6,7 @@ Future<void> updateBusRouteScheduleCost({
   required String busNumber,
   required String from,
   required String to,
-  required String dateTime, // DateTime string in ISO 8601 format
+  required String dateTime,
   required int cost,
   required bool isInService,
   required String year,
@@ -15,7 +14,7 @@ Future<void> updateBusRouteScheduleCost({
   required String day,
 }) async {
   try {
-    print('Hi');
+    //print('Hi');
     // Query the Firestore collection to find the document
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('BusDB')
@@ -24,11 +23,11 @@ Future<void> updateBusRouteScheduleCost({
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      print('Hi');
-      // Get the document ID of the matching document
-      String docId = querySnapshot.docs.first.id;
+      //print('Hi');
+      String docId =
+          querySnapshot.docs.first.id; // document ID of the matching document
 
-      // Update the document fields
+      // Update document
       await FirebaseFirestore.instance.collection('BusDB').doc(docId).update({
         'From': from,
         'To': to,

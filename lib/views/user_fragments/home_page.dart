@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/constants/cities.dart';
 import 'package:seat_easy/utilities/picker/date_time_picker.dart';
+import 'package:seat_easy/utilities/popups/confirm_booking_popup.dart';
 import 'package:seat_easy/utilities/update_suggession.dart';
 import 'package:seat_easy/views/user_fragments/show_bus_page.dart';
 
@@ -63,16 +64,13 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    Radio(value: true, groupValue: true, onChanged: (_) {}),
-                    const Text('One Way'),
-                    const SizedBox(width: 20),
-                    Radio(value: false, groupValue: true, onChanged: (_) {}),
-                    const Text('Round Way'),
-                  ],
-                ),
                 const SizedBox(height: 10),
+                const Text(
+                  'Pick Route and Date',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                ),
+
+                const SizedBox(height: 20),
 
                 // From Autocomplete Input
                 Autocomplete<String>(
@@ -96,7 +94,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                         labelText: "From",
                         border: OutlineInputBorder(),
                         constraints: BoxConstraints(
-                          maxHeight: 50.0,
+                          maxHeight: 100.0,
                           maxWidth: 450.0,
                         ),
                       ),
@@ -104,7 +102,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
                 // To Autocomplete Input
                 Autocomplete<String>(
@@ -128,7 +126,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                         labelText: "To",
                         border: OutlineInputBorder(),
                         constraints: BoxConstraints(
-                          maxHeight: 50.0,
+                          maxHeight: 100.0,
                           maxWidth: 450.0,
                         ),
                       ),
@@ -136,7 +134,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
                 // Date Picker
                 GestureDetector(
@@ -153,7 +151,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     });
                   },
                   child: Container(
-                    height: 50.0,
+                    height: 60.0,
                     width: 450.0,
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -173,7 +171,7 @@ class _BusBookingScreenState extends State<BusBookingScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 30.0),
 
                 MyButton(
                     onTap: () {

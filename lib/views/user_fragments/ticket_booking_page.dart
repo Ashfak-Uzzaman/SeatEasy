@@ -1,8 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_easy/components/my_button.dart';
+
 import 'package:seat_easy/constants/seats.dart';
 
+import 'package:seat_easy/utilities/popups/confirm_booking_popup.dart';
+
 class TicketBookingPage extends StatefulWidget {
-  const TicketBookingPage({super.key});
+  const TicketBookingPage({
+    super.key,
+    required this.busRef,
+    required this.seatStatusArray,
+    required this.costPerSeat,
+    required this.ticket,
+  });
+
+  final dynamic
+      busRef; // Assuming dynamic type for now, update based on actual type
+  final List<dynamic> seatStatusArray;
+  final int costPerSeat;
+  final String ticket;
 
   @override
   State<TicketBookingPage> createState() => _TicketBookingPageState();
@@ -10,28 +27,50 @@ class TicketBookingPage extends StatefulWidget {
 
 class _TicketBookingPageState extends State<TicketBookingPage> {
   final int totalSeats = 32;
+  late int cost;
+  int totalCost = 0;
   List<bool> selectedSeats = List.generate(32, (index) => false);
 
-  late List<bool> bookedSeats;
+  late List<dynamic> seatStatus;
+  late DocumentReference busRef;
+  late String ticket;
+  late String selectedSeatName;
+
+  @override
+  void initState() {
+    super.initState();
+    cost = widget.costPerSeat;
+    seatStatus = widget.seatStatusArray;
+    busRef = widget.busRef;
+    ticket = widget.ticket;
+    selectedSeatName = '';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Bus Seat Booking'),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text(
+          'Total Cost: $totalCost.00 /-',
+          style:
+              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: StreamBuilder<Object>(
-            stream: null,
-            builder: (context, snapshot) {
-              return GridView.builder(
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5, // 4 seats + 1 gap
                   crossAxisSpacing:
                       8, // horizontal spacing between items in a row
                   mainAxisSpacing:
-                      16, // Specifies the vertical spacing between rows
+                      10, // Specifies the vertical spacing between rows
                 ),
                 itemCount: 40, // 32 seats + 8 gaps
                 itemBuilder: (context, index) {
@@ -47,14 +86,21 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedSeats[seatIndex] = !selectedSeats[seatIndex];
+                        if (!seatStatus[seatIndex]) {
+                          selectedSeats[seatIndex] = !selectedSeats[seatIndex];
+                          //seatStatus[seatIndex] = selectedSeats[seatIndex];
+                          totalCost +=
+                              selectedSeats[seatIndex] ? cost : (-1 * cost);
+                        }
                       });
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: selectedSeats[seatIndex]
-                            ? Colors.green
-                            : Colors.grey,
+                        color: seatStatus[seatIndex]
+                            ? Colors.red
+                            : selectedSeats[seatIndex]
+                                ? Colors.green
+                                : Colors.grey,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       alignment: Alignment.center,
@@ -65,8 +111,40 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                     ),
                   );
                 },
-              );
-            }),
+              ),
+            ),
+          ),
+          // Button below the grid
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 30),
+            child: MyButton(
+                onTap: () {
+                  for (int i = 0; i < seatStatus.length; i++) {
+                    seatStatus[i] =
+                        selectedSeats[i] ? selectedSeats[i] : seatStatus[i];
+
+                    selectedSeatName = selectedSeats[i]
+                        ? '$selectedSeatName${seats[i]} '
+                        : selectedSeatName;
+                  }
+                  //print('$selectedSeatName');
+
+                  confirmBookingPopup(
+                    context: context,
+                    totalCost: totalCost,
+                    busRef: busRef,
+                    seatStatusArray: seatStatus,
+                    ticket: ticket,
+                    selectedSeatName: selectedSeatName,
+                  );
+                  //Navigator.pop(context);
+                  /*Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeRoute,(route) => false);*/
+                },
+                text: 'Continue',
+                isEnabled: true),
+          ),
+        ],
       ),
     );
   }

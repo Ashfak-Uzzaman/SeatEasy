@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
-import 'package:seat_easy/views/user_fragments/account_page.dart';
+import 'package:seat_easy/utilities/make_phone_call.dart';
+
+import 'package:seat_easy/views/user_fragments/profile_page.dart';
 import 'package:seat_easy/views/user_fragments/home_page.dart';
 import 'package:seat_easy/views/user_fragments/ticket_page.dart';
 
@@ -72,8 +74,10 @@ class _UserMainViewState extends State<UserMainView> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.person),
+            onPressed: () {
+              makePhoneCall(phoneNumber: '01643216242', context: context);
+            },
+            icon: const Icon(Icons.phone),
           ),
           IconButton(
             onPressed: () async {
@@ -87,13 +91,6 @@ class _UserMainViewState extends State<UserMainView> {
             icon: const Icon(Icons.logout),
           ),
         ],
-      ),
-      drawer: const Drawer(
-        backgroundColor: Colors.blue,
-        child: Text(
-          'On Progress',
-          textAlign: TextAlign.center,
-        ),
       ),
     );
   }

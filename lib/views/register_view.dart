@@ -4,6 +4,8 @@ import 'package:seat_easy/components/my_textfield.dart';
 import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/services/auth/auth_exception.dart';
 import 'package:seat_easy/services/auth/auth_service.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_exceptions.dart';
+import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/create_user.dart';
 import 'package:seat_easy/utilities/dialogs/error_dialog.dart';
 
 import 'package:seat_easy/utilities/validation_utils.dart';
@@ -142,7 +144,8 @@ class _RegisterViewState extends State<RegisterView> {
   // sign user in method
   void registerUser(context) async {
     final email = _email.text;
-    //final mobile = _mobile.text;
+    final name = _name.text.isEmpty ? email : _name.text;
+    final phone = _mobile.text;
     final password = _password.text;
     final confirmPassword = _confirmPassword.text;
 
@@ -164,6 +167,10 @@ class _RegisterViewState extends State<RegisterView> {
         );
 
         AuthService.firebase().sendEmailVerification();
+        String userId = AuthService.firebase().currentUser!.id;
+
+        await createUser(userId, name, email, phone);
+
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushNamed(verifyEmailRoute);
       } on EmailAlreadyInUseAuthException catch (_) {
@@ -182,7 +189,13 @@ class _RegisterViewState extends State<RegisterView> {
         await showErrorDialog(
           // ignore: use_build_context_synchronously
           context,
-          'Failed to register',
+          'Failed to Register',
+        );
+      } on FaildToRegisterAtDBException catch (_) {
+        await showErrorDialog(
+          // ignore: use_build_context_synchronously
+          context,
+          'Failed to Update at Database',
         );
       }
     }

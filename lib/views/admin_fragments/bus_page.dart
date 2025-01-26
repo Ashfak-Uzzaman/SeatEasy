@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:seat_easy/components/my_button.dart';
 import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/delete_bus.dart';
 import 'package:seat_easy/services/cloud_storage/cloud_storage_operations/get_bus_stream.dart';
-import 'package:seat_easy/utilities/popup_textfields/add_bus_popup.dart';
+import 'package:seat_easy/utilities/popups/add_bus_popup.dart';
 
 class BusPage extends StatefulWidget {
   const BusPage({super.key});

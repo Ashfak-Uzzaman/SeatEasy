@@ -3,7 +3,8 @@ import 'package:seat_easy/constants/routes.dart';
 import 'package:seat_easy/views/admin_fragments/booking_page.dart';
 import 'package:seat_easy/views/admin_fragments/bus_page.dart';
 import 'package:seat_easy/views/admin_fragments/customer_page.dart';
-import 'package:seat_easy/views/admin_fragments/route_page.dart';
+import 'package:seat_easy/views/admin_fragments/dashboard_page.dart';
+import 'package:seat_easy/views/admin_fragments/route_and_schedule_page.dart';
 
 class AdminMainView extends StatefulWidget {
   const AdminMainView({super.key});
@@ -13,10 +14,11 @@ class AdminMainView extends StatefulWidget {
 }
 
 class _AdminMainViewState extends State<AdminMainView> {
-  int _selected = 1;
+  int _selected = 0;
   final _screens = [
+    const Dashboard(),
     const BusPage(),
-    const RoutePage(),
+    const RouteAndSchedulePage(),
     const BookingPage(),
     const CustomerPage(),
   ];
@@ -62,6 +64,13 @@ class _AdminMainViewState extends State<AdminMainView> {
                   accountEmail: Text("admin@seateasy.com")),
             ),
             ListTile(
+              title: const Text('Dash Board'),
+              leading: const Icon(Icons.dashboard),
+              onTap: () async {
+                changeSelected(0);
+              },
+            ),
+            ListTile(
               title: const Text('Buses'),
               leading: Image.asset(
                 'lib/assets/icons/bus.png',
@@ -69,11 +78,11 @@ class _AdminMainViewState extends State<AdminMainView> {
                 height: 24,
               ),
               onTap: () {
-                changeSelected(0);
+                changeSelected(1);
               },
             ),
             ListTile(
-              title: const Text('Routes'),
+              title: const Text('Routes ad Schedules'),
               selected: true,
               leading: Image.asset(
                 'lib/assets/icons/route.png',
@@ -81,7 +90,7 @@ class _AdminMainViewState extends State<AdminMainView> {
                 height: 24,
               ),
               onTap: () {
-                changeSelected(1);
+                changeSelected(2);
               },
             ),
             ListTile(
@@ -92,20 +101,15 @@ class _AdminMainViewState extends State<AdminMainView> {
                 height: 24,
               ),
               onTap: () {
-                changeSelected(2);
+                changeSelected(3);
               },
             ),
             ListTile(
               title: const Text('Customers'),
               leading: const Icon(Icons.people),
               onTap: () {
-                changeSelected(3);
+                changeSelected(4);
               },
-            ),
-            ListTile(
-              title: const Text('Add New Admin'),
-              leading: const Icon(Icons.lock_person_outlined),
-              onTap: () async {},
             ),
           ],
         ),

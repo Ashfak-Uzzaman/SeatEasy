@@ -46,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
       final user = AuthService.firebase().currentUser;
 
       if (user?.isEmailVerified ?? false) {
-        if (email.compareTo('mdashfak0508@gmail.com') == 0) {
+        if (email.compareTo('cse_182210012101041@lus.ac.bd') == 0) {
           Navigator.of(context).pushNamedAndRemoveUntil(
             adminHomeRoute,
             (route) =>
